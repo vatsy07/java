@@ -1,0 +1,101 @@
+class Solution {
+public:
+
+    class node
+    {
+    public:
+        int number;
+        int pos;
+        node* prev;
+        node* next;
+
+        node(int a, int b, node* c, node* d)
+        {
+            number = a;
+            pos    = b;
+            prev   = c;
+            next   = d;
+        }
+    };
+
+    class stck
+    {
+    public:
+        int count = 0;
+        node* head = NULL;
+
+        void push(int a, int b)
+        {
+            node* newNode = new node(a, b, NULL, NULL);
+
+            if(count == 0)
+            {
+                head = newNode;
+            }
+            else
+            {
+                if(a <= head->number)
+                {
+                    newNode->next = head;
+                    head->prev = newNode;
+                    head = newNode;
+                }
+                else
+                {
+                    node* temp = head;
+
+                    while(temp->next != NULL && temp->number < a)
+                    {
+                        temp = temp->next;
+                    }
+
+                    if(temp->next == NULL && temp->number < a)
+                    {
+                        temp->next = newNode;
+                        newNode->prev = temp;
+                    }
+                    else
+                    {
+                        node* prevNode = temp->prev;
+
+                        prevNode->next = newNode;
+                        newNode->prev = prevNode;
+
+                        newNode->next = temp;
+                        temp->prev = newNode;
+                    }
+                }
+            }
+            count++;
+        }
+    };
+
+    vector<vector<int>> kClosest(vector<vector<int>>& points, int k) 
+    {
+        int n = points.size();
+
+        stck s;
+
+        for(int i = 0; i < n; i++)
+        {
+            int distance = points[i][0]*points[i][0] + points[i][1]*points[i][1];
+            s.push(distance, i);
+        }
+
+        vector<vector<int>> ans;
+
+        node* temp = s.head;
+        int count = 0;
+
+        while(temp != NULL && count < k)
+        {
+            int idx = temp->pos;
+            ans.push_back(points[idx]);
+
+            temp = temp->next;
+            count++;
+        }
+
+        return ans;
+    }
+};
