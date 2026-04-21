@@ -1,0 +1,38 @@
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+
+        unordered_map<int,int> freq;
+
+        for(int i = 0; i < nums.size(); i++)
+            freq[nums[i]]++;
+
+        int n = nums.size();
+
+        vector<vector<int>> bucket(n + 1);
+
+        for(auto it : freq)
+        {
+            int num = it.first;
+            int f   = it.second;
+            bucket[f].push_back(num);
+        }
+
+        vector<int> ans;
+
+        for(int i = n; i >= 0 && k > 0; i--)
+        {
+            for(int j = 0; j < bucket[i].size() && k > 0; j++)
+            {
+                ans.push_back(bucket[i][j]);
+                k--;
+            }
+        }
+
+        return ans;
+    }
+};
