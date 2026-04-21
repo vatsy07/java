@@ -1,0 +1,124 @@
+class Solution 
+{
+public:
+
+    class Node1
+    {
+    public:
+        int number;
+        Node1* next;
+        Node1* prev;
+
+        Node1(int a, Node1* b, Node1* c)
+        {
+            number = a;
+            next   = b;
+            prev   = c;
+        }
+    };
+
+    class stck
+    {
+    public:
+        int count = 0;
+        Node1* head = NULL;
+        Node1* ptr  = NULL;
+        Node1* n    = NULL;
+
+        Node1* push(int a)
+        {
+            if(count == 0)
+            {
+                head = new Node1(a, NULL, NULL);
+                ptr  = head;
+                count++;
+            }
+            else
+            {
+                ptr = head;
+
+                if(a > head->number)
+                {
+                    Node1* last = head;
+                    while(last->next != NULL)
+                    {
+                        last = last->next;
+                    }
+
+                    if(a > last->number)
+                    {
+                        last->next = new Node1(a, NULL, last);
+                        count++;
+                        return head;
+                    }
+                }
+
+                ptr = head;
+
+                while(ptr != NULL)
+                {
+                    if(ptr->number == a)
+                    {
+                        n = ptr->next;
+                        Node1* temp = new Node1(a, n, ptr);
+
+                        if(n != NULL) n->prev = temp;
+
+                        ptr->next = temp;
+                        count++;
+                        break;
+                    }
+                    else if(ptr->number > a)
+                    {
+                        Node1* p = ptr->prev;
+                        Node1* temp = new Node1(a, ptr, p);
+
+                        if(p != NULL) p->next = temp;
+                        else head = temp;
+
+                        ptr->prev = temp;
+                        count++;
+                        break;
+                    }
+                    else
+                    {
+                        ptr = ptr->next;
+                    }
+                }
+            }
+            return head;
+        }
+    };
+
+    ListNode* mergeKLists(vector<ListNode*>& lists)
+    {
+        stck s1;
+        Node1* headf = NULL;
+
+        for(int i = 0; i < lists.size(); i++)
+        {
+            ListNode* temp = lists[i];
+
+            while(temp != NULL)
+            {
+                headf = s1.push(temp->val);
+                temp = temp->next;
+            }
+        }
+
+        if(headf == NULL) return NULL;
+
+        ListNode* newHead = new ListNode(headf->number);
+        ListNode* curr = newHead;
+        headf = headf->next;
+
+        while(headf != NULL)
+        {
+            curr->next = new ListNode(headf->number);
+            curr = curr->next;
+            headf = headf->next;
+        }
+
+        return newHead;
+    }
+};
