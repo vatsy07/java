@@ -1,0 +1,67 @@
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& str) {
+        int n = str.size();
+
+        vector<string> temp(n);
+
+        for(int i = 0; i < n; i++)
+        {
+            temp[i] = str[i];
+            sort(temp[i].begin(), temp[i].end());
+        }
+
+        vector<int> visited(n, 0);
+        vector<int> array_found(n);
+
+        for(int i = 0; i < n; i++)
+        {
+            array_found[i] = i;
+        }
+
+        int i = 0;
+        while(i < n)
+        {
+            if(visited[i] == 1)
+            {
+                i++;
+            }
+            else
+            {
+                for(int j = i + 1; j < n; j++)
+                {
+                    if(temp[i] == temp[j])
+                    {
+                        visited[j] = 1;
+                        array_found[j] = i;
+                    }
+                }
+                visited[i] = 1;
+                i++;
+            }
+        }
+
+        vector<vector<string>> ans;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(array_found[i] == i)
+            {
+                vector<string> group;
+                group.push_back(str[i]);
+
+                for(int j = 0; j < n; j++)
+                {
+                    if(array_found[j] == i && j != i)
+                    {
+                        group.push_back(str[j]);
+                    }
+                }
+
+                ans.push_back(group);
+            }
+        }
+
+        return ans;
+    }
+};
