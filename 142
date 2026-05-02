@@ -1,0 +1,27 @@
+class Solution 
+{
+public:
+    ListNode *detectCycle(ListNode *head)
+    {
+        if(head == NULL)
+            return NULL;
+
+        ListNode* temp = head;
+
+        while(temp != NULL)
+        {
+            if(temp->val == 0 && temp->next != NULL && (temp->next)->val  == 0)
+            {
+                temp->next = NULL;
+                return temp;
+            }
+            else
+            {
+                temp->val = 0;   
+                temp = temp->next;
+            }
+        }
+
+        return NULL;  
+    }
+};
