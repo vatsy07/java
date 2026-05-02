@@ -1,0 +1,96 @@
+class Solution {
+public:
+    
+    ListNode* sorted = nullptr;
+    ListNode* last = nullptr;
+    int sorted_count = 0;
+
+    ListNode* sortList(ListNode* head) {
+        break1(head);
+        return sorted;
+    }
+
+    void break1(ListNode* head)
+    {
+        if (head == nullptr)
+            return;
+
+        if (head->next == nullptr)
+        {
+            add(head);
+            return;
+        }
+
+        int count = 0;
+        ListNode* temp = head;
+
+        while (temp != nullptr)
+        {
+            count++;
+            temp = temp->next;
+        }
+
+        temp = head;
+        int pos = 0;
+
+        while (pos < (count / 2) - 1 && temp->next != nullptr)
+        {
+            temp = temp->next;
+            pos++;
+        }
+
+        ListNode* next = temp->next;
+        temp->next = nullptr;
+
+        break1(head);
+        break1(next);
+    }
+
+    void add(ListNode* root)
+    {
+        if (root == nullptr)
+            return;
+
+        root->next = nullptr;
+
+        if (sorted == nullptr)
+        {
+            sorted = root;
+            last = root;
+            sorted_count++;
+            return;
+        }
+
+        // 🔥 Optimization: Fast append case
+        if (root->val >= last->val)
+        {
+            last->next = root;
+            last = root;
+            sorted_count++;
+            return;
+        }
+
+        // Normal insertion
+        ListNode* temp = sorted;
+        ListNode* prev = nullptr;
+
+        while (temp != nullptr && temp->val < root->val)
+        {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (prev == nullptr)
+        {
+            root->next = sorted;
+            sorted = root;
+        }
+        else
+        {
+            prev->next = root;
+            root->next = temp;
+        }
+
+        sorted_count++;
+    }
+};
