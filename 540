@@ -1,0 +1,45 @@
+class Solution {
+public:
+    int found = 1;
+
+    void find_unique(vector<int>& a, int b, int e, int &ans)
+    {
+        if(b > e)
+        {
+            return;
+        }
+        else if(b == e)
+        {
+            if(found != 0)
+            {
+                int m = (b + e) / 2;
+                ans = a[m];
+                return;
+            }
+
+            return;
+        }
+        else
+        {
+            int m = (b + e) / 2;
+
+            if((m == 0 || a[m] != a[m-1]) && (m == a.size()-1 || a[m] != a[m+1]))
+            {
+                found = 0;
+                ans = a[m];
+                return;
+            }
+            else
+            {
+                find_unique(a, b, m, ans);
+                find_unique(a, m + 1, e, ans);
+            }
+        }
+    }
+
+    int singleNonDuplicate(vector<int>& nums) {
+        int ans = -1;
+        find_unique(nums, 0, nums.size() - 1, ans);
+        return ans;
+    }
+};
