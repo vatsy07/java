@@ -1,0 +1,41 @@
+class Solution {
+public:
+
+    bool found(int index, vector<int>& nums, int n, vector<int>& visited)
+    {
+        int des = n - 1;
+
+        if(visited[index] == 1)
+        {
+            return false;
+        }
+
+        int mag = nums[index];
+
+        if(index + mag >= des)
+        {
+            return true;
+        }
+
+        for(int i = index + 1; i <= min(index + mag, des); i++)
+        {
+            if(found(i, nums, n, visited))
+            {
+                return true;
+            }
+        }
+
+        visited[index] = 1; 
+
+        return false;
+    }
+
+    bool canJump(vector<int>& nums)
+    {
+        int n = nums.size();
+
+        vector<int> visited(n, 0);
+
+        return found(0, nums, n, visited);
+    }
+};
