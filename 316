@@ -1,0 +1,184 @@
+class Solution {
+public:
+
+    class Node
+    {
+    public:
+        int number;
+        int index;
+        Node* next;
+
+        Node(int num, int idx)
+        {
+            number = num;
+            index = idx;
+            next = NULL;
+        }
+    };
+
+    void deleteNode(Node*& head, Node* target)
+    {
+        if(head == NULL || target == NULL)
+            return;
+
+        if(head == target)
+        {
+            head = head->next;
+            delete target;
+            return;
+        }
+
+        Node* prev = head;
+
+        while(prev != NULL && prev->next != target)
+            prev = prev->next;
+
+        if(prev == NULL)
+            return;
+
+        prev->next = target->next;
+        delete target;
+    }
+
+    void replaceDuplicate(Node*& head, Node* first, Node* second, vector<int>& ascii, int n)
+    {
+        Node* smaller = NULL;
+
+        Node* temp = first->next;
+
+        while(temp != NULL && temp != second)
+        {
+            if(temp->number < first->number)
+            {
+                smaller = temp;
+                break;
+            }
+
+            temp = temp->next;
+        }
+
+        if(smaller == NULL)
+        {
+            deleteNode(head, second);
+            return;
+        }
+
+        bool removeFirst = true;
+
+        temp = first->next;
+
+        while(temp != NULL && temp != smaller)
+        {
+            bool found = false;
+
+            for(int i = second->index + 1; i < n; i++)
+            {
+                if(ascii[i] == temp->number)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if(found == false)
+            {
+                removeFirst = false;
+                break;
+            }
+
+            temp = temp->next;
+        }
+
+        if(removeFirst)
+            deleteNode(head, first);
+        else
+            deleteNode(head, second);
+    }
+
+    Node* createLinkedList(vector<int>& ascii, int n)
+    {
+        if(n == 0)
+            return NULL;
+
+        Node* head = NULL;
+        Node* tail = NULL;
+
+        for(int i = 0; i < n; i++)
+        {
+            Node* node = new Node(ascii[i], i);
+
+            if(head == NULL)
+            {
+                head = node;
+                tail = node;
+                continue;
+            }
+
+            Node* current = head;
+            Node* firstDuplicate = NULL;
+
+            while(current != NULL)
+            {
+                if(current->number == node->number)
+                {
+                    firstDuplicate = current;
+                    break;
+                }
+
+                current = current->next;
+            }
+
+            if(tail != NULL)
+            {
+                tail->next = node;
+                tail = node;
+            }
+
+            if(firstDuplicate != NULL)
+            {
+                replaceDuplicate(head, firstDuplicate, node, ascii, n);
+
+                tail = head;
+                if(tail != NULL)
+                {
+                    while(tail->next != NULL)
+                        tail = tail->next;
+                }
+            }
+        }
+
+        return head;
+    }
+
+    string removeDuplicateLetters(string s)
+    {
+        int n = s.length();
+
+        vector<int> ascii(n);
+
+        for(int i = 0; i < n; i++)
+            ascii[i] = (int)s[i];
+
+        Node* head = createLinkedList(ascii, n);
+
+        string ans = "";
+
+        Node* temp = head;
+
+        while(temp != NULL)
+        {
+            ans += char(temp->number);
+            temp = temp->next;
+        }
+
+        
+        while(head != NULL)
+        {
+            Node* next = head->next;
+            delete head;
+            head = next;
+        }
+
+        return ans;
+    }
+};
