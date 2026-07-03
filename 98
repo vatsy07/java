@@ -1,0 +1,43 @@
+class Solution {
+public:
+    vector<int> array;
+
+    void traverse(TreeNode* root)
+    {
+        if(root == NULL)
+        {
+            return;
+        }
+
+        traverse(root->left);
+        array.push_back(root->val);
+        traverse(root->right);
+    }
+
+    bool isValidBST(TreeNode* root)
+    {
+        traverse(root);
+
+        int n = array.size();
+
+        if(n == 0)
+        {
+            return true;
+        }
+
+        bool found = true;
+
+        for(int i = 0; i < n - 1; i++)
+        {
+            int target = array[i + 1];
+
+            if(array[i] >= target)
+            {
+                found = false;
+                break;
+            }
+        }
+
+        return found;
+    }
+};
