@@ -1,0 +1,83 @@
+/**
+ * Definition for singly-linked list node used as stack.
+ */
+class Solution
+{
+public:
+
+    class Node
+    {
+    public:
+        char data;
+        int index;
+        Node* next;
+
+        Node(char ch, int idx)
+        {
+            data = ch;
+            index = idx;
+            next = NULL;
+        }
+    };
+
+    void push(Node*& head, char ch, int idx)
+    {
+        Node* temp = new Node(ch, idx);
+        temp->next = head;
+        head = temp;
+    }
+
+    void pop(Node*& head)
+    {
+        if(head == NULL)
+            return;
+
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+
+    int longestValidParentheses(string s)
+    {
+        Node* head = NULL;
+        int n = s.length();
+
+        for(int i = 0; i < n; i++)
+        {
+            if(head != NULL && head->data == '(' && s[i] == ')')
+            {
+                pop(head);
+            }
+            else
+            {
+                push(head, s[i], i);
+            }
+        }
+
+        if(head == NULL)
+            return n;
+
+        vector<int> index;
+
+        while(head != NULL)
+        {
+            index.push_back(head->index);
+            pop(head);
+        }
+
+        reverse(index.begin(), index.end());
+
+        int ans = 0;
+
+        ans = max(ans, index[0]);
+
+        for(int i = 1; i < index.size(); i++)
+        {
+            ans = max(ans, index[i] - index[i-1] - 1);
+        }
+
+        ans = max(ans, n - index.back() - 1);
+
+        return ans;
+    }
+};
