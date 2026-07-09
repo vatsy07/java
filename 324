@@ -1,0 +1,86 @@
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    void wiggleSort(vector<int>& nums) {
+        int n = nums.size();
+        if (n <= 1) return;
+        vector<int> arr = nums;
+        sort(arr.begin(), arr.end());
+        vector<int> backup = arr;
+        vector<int> finalArr(n, -1);
+        int i = 0;
+        int j = n / 2;
+        int index = 0;
+        int lastIndex = n - 1;
+        bool rotated = false;
+
+        while (i < n / 2) {
+            finalArr[index] = arr[i];
+            i++;
+            index += 2;
+        }
+        index = 1;
+
+        while (j < n) {
+            while (index < n && finalArr[index] != -1) {
+                index += 2;
+            }
+            if (index >= n) break;
+
+            if (arr[j] > finalArr[index - 1]) {
+                finalArr[index] = arr[j];
+                bool conflict = (index + 1 < n && finalArr[index] <= finalArr[index + 1]);
+                if (!conflict) {
+                    j++;
+                    index += 2;
+                    continue;
+                } else {
+                    if (rotated) {
+                        nums = backup;
+                        return;
+                    }
+                    rotated = true;
+
+                    int cut = index + 1;
+                    std::rotate(finalArr.begin(),
+                                finalArr.begin() + cut,
+                                finalArr.begin() + lastIndex + 1);
+
+                    int newLastIndex = -1;
+                    for (int k = lastIndex; k >= 0; k--) {
+                        if (finalArr[k] == -1) { newLastIndex = k; break; }
+                    }
+                    lastIndex = newLastIndex;
+
+                    j++;
+                    index = 1;
+                    continue;
+                }
+            } else {
+                finalArr[lastIndex] = arr[j];
+                lastIndex--;
+                j++;
+                if (j == n) break;
+                finalArr[index] = arr[j];
+                j++;
+                index += 2;
+                continue;
+            }
+        }
+
+        while (j < n) {
+            while (lastIndex >= 0 && finalArr[lastIndex] != -1)
+                lastIndex--;
+            if (lastIndex < 0)
+                break;
+            finalArr[lastIndex] = finalArr[1];
+            finalArr[1] = arr[j];
+            j++;
+        }
+
+        nums = finalArr;
+    }
+};
