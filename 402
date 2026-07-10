@@ -1,0 +1,42 @@
+class Solution {
+public:
+    string removeKdigits(string num, int k) {
+
+        deque<char> q;
+
+        for (char ch : num) {
+
+            while (!q.empty() && k > 0 && q.back() > ch) {
+                q.pop_back();
+                k--;
+            }
+
+            q.push_back(ch);
+        }
+
+        // If digits are strictly increasing,
+        // remove the remaining digits from the back.
+        while (k > 0 && !q.empty()) {
+            q.pop_back();
+            k--;
+        }
+
+        string ans = "";
+
+        bool leadingZero = true;
+
+        while (!q.empty()) {
+
+            if (leadingZero && q.front() == '0') {
+                q.pop_front();
+                continue;
+            }
+
+            leadingZero = false;
+            ans += q.front();
+            q.pop_front();
+        }
+
+        return ans.empty() ? "0" : ans;
+    }
+};
