@@ -1,0 +1,89 @@
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+
+        int n = nums.size();
+
+        if (n == 3)
+            return nums[0] + nums[1] + nums[2];
+
+        sort(nums.begin(), nums.end());
+
+        int zero_index = -1;
+
+        for (int i = 0; i < n; i++)
+        {
+            if (nums[i] == 0)
+            {
+                zero_index = i;
+                break;
+            }
+        }
+
+        int final_sum = 0;
+        int prev_diff = INT_MAX;
+
+        for (int i = 0; i < n; i++)
+        {
+            int j = n - 1;
+
+            while (j > i)
+            {
+                
+
+                int sum = nums[i] + nums[j];
+                int bestThird = 0;
+
+                if (sum == target)
+                {
+                    if (zero_index != -1 && zero_index != i && zero_index != j)
+                    {
+                        bestThird = nums[zero_index];
+                        sum += bestThird;
+
+                        int currentDiff = abs(target - sum);
+
+                        if (currentDiff < prev_diff)
+                        {
+                            prev_diff = currentDiff;
+                            final_sum = sum;
+                        }
+                    }
+
+                    j--;
+                    continue;
+                }
+
+                int best = INT_MAX;
+
+                for (int k = 0; k < n; k++)
+                {
+                    if (k == i || k == j)
+                        continue;
+
+                    int current = abs(target - (sum + nums[k]));
+
+                    if (current < best)
+                    {
+                        best = current;
+                        bestThird = nums[k];
+                    }
+                }
+
+                sum += bestThird;
+
+                int currentDiff = abs(target - sum);
+
+                if (currentDiff < prev_diff)
+                {
+                    prev_diff = currentDiff;
+                    final_sum = sum;
+                }
+
+                j--;
+            }
+        }
+
+        return final_sum;
+    }
+};
