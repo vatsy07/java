@@ -1,0 +1,95 @@
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& array) {
+        int n = array.size();
+        sort(array.begin(), array.end());
+        vector<vector<int>> result;
+
+        int has_zero = -1;
+        int first_zero = -1;
+        int first_positive = -1;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(array[i] == 0)
+            {
+                if(first_zero == -1) first_zero = i;
+                has_zero = i;
+            }
+            else if(array[i] > 0)
+            {
+                first_positive = i;
+                break;
+            }
+        }
+
+        if(first_positive == -1) first_positive = n;
+
+        int neg_end = (first_zero != -1) ? first_zero : first_positive;
+
+        int zero_count = (has_zero != -1) ? (first_positive - first_zero) : 0;
+        if(zero_count >= 3)
+            result.push_back({0, 0, 0});
+
+        auto existsInRange = [&](int lo, int hi, int target) -> int
+        {
+            int start = lo, end = hi;
+            while(start <= end)
+            {
+                int mid = (start + end) / 2;
+                if(array[mid] == target) return mid;
+                else if(array[mid] < target) start = mid + 1;
+                else end = mid - 1;
+            }
+            return -1;
+        };
+
+        int i = 0;
+        while(i < neg_end)
+        {
+            if(i > 0 && array[i] == array[i - 1])
+            {
+                i++;
+                continue;
+            }
+
+            int j = n - 1;
+            while(j >= first_positive)
+            {
+                if(j < n - 1 && array[j] == array[j + 1])
+                {
+                    j--;
+                    continue;
+                }
+
+                int sum = array[i] + array[j];
+
+                if(sum == 0)
+                {
+                    if(has_zero != -1)
+                        result.push_back({array[i], array[j], array[has_zero]});
+                }
+                else if(sum > 0)
+                {
+                    int target = -sum;
+                    int k = existsInRange(i + 1, neg_end - 1, target);
+                    if(k != -1)
+                        result.push_back({array[i], array[j], array[k]});
+                }
+                else
+                {
+                    int target = -sum;
+                    int k = existsInRange(first_positive, j - 1, target);
+                    if(k != -1)
+                        result.push_back({array[i], array[j], array[k]});
+                }
+
+                j--;
+            }
+
+            i++;
+        }
+
+        return result;
+    }
+};
