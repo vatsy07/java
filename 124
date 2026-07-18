@@ -1,0 +1,47 @@
+class Solution {
+public:
+    int prev_sum = INT_MIN;
+
+    int find_sum(TreeNode *head)
+    {
+        if(head == NULL)
+            return INT_MIN;
+
+        int x1 = INT_MIN, x2 = INT_MIN;
+
+        if(head->left != NULL)
+            x1 = find_sum(head->left);
+
+        if(head->right != NULL)
+            x2 = find_sum(head->right);
+
+        int ret = head->val;
+
+        if(x1 != INT_MIN)
+            ret = max(ret, head->val + x1);
+
+        if(x2 != INT_MIN)
+            ret = max(ret, head->val + x2);
+
+        int curr = head->val;
+
+        if(x1 != INT_MIN)
+            curr = max(curr, head->val + x1);
+
+        if(x2 != INT_MIN)
+            curr = max(curr, head->val + x2);
+
+        if(x1 != INT_MIN && x2 != INT_MIN)
+            curr = max(curr, head->val + x1 + x2);
+
+        prev_sum = max(prev_sum, curr);
+
+        return ret;
+    }
+
+    int maxPathSum(TreeNode* root)
+    {
+        find_sum(root);
+        return prev_sum;
+    }
+};
