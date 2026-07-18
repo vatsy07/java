@@ -1,0 +1,32 @@
+class Solution {
+public:
+    int postIndex;
+
+    TreeNode* solve(vector<int>& inorder, vector<int>& postorder, int start, int end)
+    {
+        if(start > end)
+        {
+            return NULL;
+        }
+
+        TreeNode* root = new TreeNode(postorder[postIndex]);
+        postIndex--;
+
+        int index = start;
+        while(inorder[index] != root->val)
+        {
+            index++;
+        }
+
+        root->right = solve(inorder, postorder, index + 1, end);
+        root->left = solve(inorder, postorder, start, index - 1);
+
+        return root;
+    }
+
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder)
+    {
+        postIndex = postorder.size() - 1;
+        return solve(inorder, postorder, 0, inorder.size() - 1);
+    }
+};
