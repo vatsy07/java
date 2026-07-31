@@ -1,0 +1,80 @@
+class Solution {
+public:
+    int minimumPushes(string word) {
+
+        // Frequency of each character
+        vector<int> freq(26, 0);
+
+        for (char ch : word)
+            freq[ch - 'a']++;
+
+        // Store unique characters with their frequency
+        vector<pair<char, int>> v;
+
+        for (int i = 0; i < 26; i++) {
+            if (freq[i] > 0)
+                v.push_back({char('a' + i), freq[i]});
+        }
+
+        // Sort in decreasing order of frequency
+        sort(v.begin(), v.end(), [](pair<char, int> a, pair<char, int> b) {
+            return a.second > b.second;
+        });
+
+        // 2D array
+        const int ROW = 8;
+        const int COL = 100000;
+        char arr[ROW][COL];
+
+        // Initialize
+        for (int i = 0; i < ROW; i++) {
+            for (int j = 0; j < COL; j++) {
+                arr[i][j] = '\0';
+            }
+        }
+
+        // Fill column-wise
+        int row = 0, col = 0;
+
+        for (auto x : v) {
+            arr[row][col] = x.first;
+
+            row++;
+            if (row == ROW) {
+                row = 0;
+                col++;
+            }
+        }
+
+        int count = 0;
+        bool visited[26] = {false};
+
+        // Traverse original string
+        for (char ch : word) {
+
+            if (visited[ch - 'a'])
+                continue;
+
+            visited[ch - 'a'] = true;
+
+            // Search in the 2D array
+            for (int c = 0; c <= col; c++) {
+                bool found = false;
+
+                for (int r = 0; r < ROW; r++) {
+
+                    if (arr[r][c] == ch) {
+                        count += (c + 1) * freq[ch - 'a'];
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found)
+                    break;
+            }
+        }
+
+        return count;
+    }
+};
