@@ -1,0 +1,196 @@
+class Solution {
+public:
+
+    struct Info {
+        int nodes = 0;
+        int leaves = 0;
+        long long sum = 0;
+    };
+
+    vector<vector<int>> tree;
+    vector<vector<int>> matrix;
+    vector<int> parent;
+    vector<Info> sub;
+
+    void buildMatrix(int node, int par) {
+        vector<int> row;
+        row.push_back(node);
+
+        for (int x : tree[node]) {
+            if (x != par)
+                row.push_back(x);
+        }
+
+        if (row.size() == 1)
+            row.push_back(-1);
+
+        matrix.push_back(row);
+
+        for (int x : tree[node]) {
+            if (x != par)
+                buildMatrix(x, node);
+        }
+    }
+
+    void calculateSubtree(int node, int par) {
+        sub[node].nodes = 1;
+
+        bool leaf = true;
+
+        for (int x : tree[node]) {
+            if (x == par)
+                continue;
+
+            leaf = false;
+            parent[x] = node;
+
+            calculateSubtree(x, node);
+
+            sub[node].nodes += sub[x].nodes;
+            sub[node].sum += sub[x].sum + sub[x].nodes;
+            sub[node].leaves += sub[x].leaves;
+        }
+
+        if (leaf)
+            sub[node].leaves = 1;
+    }
+
+    int countLeaves(int node, int par) {
+        bool leaf = true;
+        int cnt = 0;
+
+        for (int x : tree[node]) {
+            if (x == par)
+                continue;
+
+            leaf = false;
+            cnt += countLeaves(x, node);
+        }
+
+        return leaf ? 1 : cnt;
+    }
+
+    bool isInclined() {
+        for (auto &v : tree) {
+            if (v.size() > 2)
+                return false;
+        }
+        return true;
+    }
+
+    vector<int> inclinedAnswer(int n) {
+        vector<int> ans(n);
+
+        int start = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (tree[i].size() <= 1) {
+                start = i;
+                break;
+            }
+        }
+
+        vector<int> order;
+        int prev = -1;
+        int cur = start;
+
+        while (cur != -1) {
+            order.push_back(cur);
+
+            int nxt = -1;
+
+            for (int x : tree[cur]) {
+                if (x != prev) {
+                    nxt = x;
+                    break;
+                }
+            }
+
+            prev = cur;
+            cur = nxt;
+        }
+
+        for (int pos = 0; pos < n; pos++) {
+            long long left = 1LL * pos * (pos + 1) / 2;
+
+            long long r = n - 1 - pos;
+
+            long long right = r * (r + 1) / 2;
+
+            ans[order[pos]] = left + right;
+        }
+
+        return ans;
+    }
+
+    void hop(int node, int par, vector<long long>& ans) {
+        for (int x : tree[node]) {
+            if (x == par)
+                continue;
+
+            ans[x] =
+                ans[node]
+                - sub[x].nodes
+                + (tree.size() - sub[x].nodes);
+
+            hop(x, node, ans);
+        }
+    }
+
+    vector<int> sumOfDistancesInTree(
+        int n,
+        vector<vector<int>>& edges
+    ) {
+        tree.assign(n, {});
+
+        for (auto &e : edges) {
+            tree[e[0]].push_back(e[1]);
+            tree[e[1]].push_back(e[0]);
+        }
+
+        if (isInclined())
+            return inclinedAnswer(n);
+
+        parent.assign(n, -1);
+        sub.assign(n, {});
+
+        matrix.clear();
+        matrix.reserve(n);
+
+        buildMatrix(0, -1);
+        calculateSubtree(0, -1);
+
+        int leftLeaves = 0;
+        int rightLeaves = 0;
+
+        long long leftSum = 0;
+        long long rightSum = 0;
+
+        if (!tree[0].empty()) {
+            int left = tree[0][0];
+
+            leftLeaves = sub[left].leaves;
+            leftSum = sub[left].sum + sub[left].nodes;
+        }
+
+        if (tree[0].size() > 1) {
+            int right = tree[0][1];
+
+            rightLeaves = sub[right].leaves;
+            rightSum = sub[right].sum + sub[right].nodes;
+        }
+
+        vector<long long> ans(n);
+
+        ans[0] = sub[0].sum;
+
+        hop(0, -1, ans);
+
+        vector<int> result(n);
+
+        for (int i = 0; i < n; i++)
+            result[i] = ans[i];
+
+        return result;
+    }
+};
