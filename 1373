@@ -1,0 +1,64 @@
+class Solution
+{
+public:
+
+    struct NodeInfo
+    {
+        bool isBST;
+        int sum;
+        int mini;
+        int maxi;
+    };
+
+    int maxSum = 0;
+
+    NodeInfo solve(TreeNode* root)
+    {
+        // Empty tree is a BST
+        if(root == NULL)
+        {
+            return {true, 0, INT_MAX, INT_MIN};
+        }
+
+        // Traverse left subtree
+        NodeInfo left = solve(root->left);
+
+        // Traverse right subtree
+        NodeInfo right = solve(root->right);
+
+        // Check whether current subtree is BST
+        if(left.isBST &&
+           right.isBST &&
+           root->val > left.maxi &&
+           root->val < right.mini)
+        {
+            int currSum = left.sum + right.sum + root->val;
+
+            // Update maximum sum
+            maxSum = max(maxSum, currSum);
+
+            return {
+                true,
+                currSum,
+                min(root->val, left.mini),
+                max(root->val, right.maxi)
+            };
+        }
+
+        // Current subtree is not a BST
+        return {
+            false,
+            0,
+            INT_MIN,
+            INT_MAX
+        };
+    }
+
+    int maxSumBST(TreeNode* root)
+    {
+        solve(root);
+
+        // If all BST sums are negative, return 0
+        return max(0, maxSum);
+    }
+};
