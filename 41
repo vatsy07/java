@@ -1,0 +1,48 @@
+class Solution {
+public:
+    int firstMissingPositive(vector<int>& arr) {
+        int maxVal = 0;
+
+        for (int i = 0; i < arr.size(); i++) {
+            if (arr[i] > maxVal)
+                maxVal = arr[i];
+        }
+
+        if (maxVal < 1)
+            return 1;
+
+        sort(arr.begin(), arr.end());
+
+        int prev = 0;
+        bool one = false;
+
+        for (int i = 0; i < arr.size(); i++) {
+            if (arr[i] == 1)
+                one = true;
+
+            if (arr[i] <= 0)
+                continue;
+
+            if (prev == 0) {
+                if (arr[i] != 1)
+                    return 1;
+
+                prev = 1;
+                continue;
+            }
+
+            if (arr[i] == prev)
+                continue;
+
+            if (arr[i] - prev > 1)
+                return prev + 1;
+
+            prev = arr[i];
+        }
+
+        if (!one)
+            return 1;
+
+        return maxVal + 1;
+    }
+};
