@@ -1,0 +1,135 @@
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+
+        vector<string> ans;
+
+        if(digits.length() == 0)
+            return ans;
+
+        char keypad[10][4] = {
+            {' ',' ',' ',' '},
+            {' ',' ',' ',' '},
+            {'a','b','c',' '},
+            {'d','e','f',' '},
+            {'g','h','i',' '},
+            {'j','k','l',' '},
+            {'m','n','o',' '},
+            {'p','q','r','s'},
+            {'t','u','v',' '},
+            {'w','x','y','z'}
+        };
+
+        int len = digits.length();
+
+        switch(len)
+        {
+            case 1:
+            {
+                int r1 = digits[0] - '0';
+
+                for(int i = 0; i < 4; i++)
+                {
+                    if(keypad[r1][i] == ' ') continue;
+
+                    string temp = "";
+                    temp += keypad[r1][i];
+                    ans.push_back(temp);
+                }
+                break;
+            }
+
+            case 2:
+            {
+                int r1 = digits[0] - '0';
+                int r2 = digits[1] - '0';
+
+                for(int i = 0; i < 4; i++)
+                {
+                    if(keypad[r1][i] == ' ') continue;
+
+                    for(int j = 0; j < 4; j++)
+                    {
+                        if(keypad[r2][j] == ' ') continue;
+
+                        string temp = "";
+                        temp += keypad[r1][i];
+                        temp += keypad[r2][j];
+
+                        ans.push_back(temp);
+                    }
+                }
+                break;
+            }
+
+            case 3:
+            {
+                int r1 = digits[0] - '0';
+                int r2 = digits[1] - '0';
+                int r3 = digits[2] - '0';
+
+                for(int i = 0; i < 4; i++)
+                {
+                    if(keypad[r1][i] == ' ') continue;
+
+                    for(int j = 0; j < 4; j++)
+                    {
+                        if(keypad[r2][j] == ' ') continue;
+
+                        for(int k = 0; k < 4; k++)
+                        {
+                            if(keypad[r3][k] == ' ') continue;
+
+                            string temp = "";
+                            temp += keypad[r1][i];
+                            temp += keypad[r2][j];
+                            temp += keypad[r3][k];
+
+                            ans.push_back(temp);
+                        }
+                    }
+                }
+                break;
+            }
+
+            case 4:
+            {
+                int r1 = digits[0] - '0';
+                int r2 = digits[1] - '0';
+                int r3 = digits[2] - '0';
+                int r4 = digits[3] - '0';
+
+                for(int i = 0; i < 4; i++)
+                {
+                    if(keypad[r1][i] == ' ') continue;
+
+                    for(int j = 0; j < 4; j++)
+                    {
+                        if(keypad[r2][j] == ' ') continue;
+
+                        for(int k = 0; k < 4; k++)
+                        {
+                            if(keypad[r3][k] == ' ') continue;
+
+                            for(int l = 0; l < 4; l++)
+                            {
+                                if(keypad[r4][l] == ' ') continue;
+
+                                string temp = "";
+                                temp += keypad[r1][i];
+                                temp += keypad[r2][j];
+                                temp += keypad[r3][k];
+                                temp += keypad[r4][l];
+
+                                ans.push_back(temp);
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        return ans;
+    }
+};
