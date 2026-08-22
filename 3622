@@ -1,0 +1,68 @@
+class Solution
+{
+public:
+    bool checkDivisibility(int n)
+    {
+        int original = n;
+
+        if(n < 10)
+        {
+            return false;
+        }
+
+        int d = pow(10, 1);
+        int sum = 0;
+        int product = 1;
+
+        int q = n / d;
+
+        if(q < 10)
+        {
+            int r = n % d;
+            sum = q + r;
+            product = q * r;
+        }
+
+        else
+        {
+            int i = 2;
+
+            while(q >= 10)
+            {
+                d = pow(10, i);
+                q = n / d;
+
+                if(q < 10)
+                {
+                    break;
+                }
+                else
+                {
+                    i++;
+                }
+            }
+
+            int digits[i + 1];
+            int index = 0;
+
+            for(int j = i; j >= 0; j--)
+            {
+                q = n / pow(10, j);
+
+                digits[index] = q;
+                index = index + 1;
+
+                n = n - (q * pow(10, j));
+            }
+
+            for(int k = 0; k < index; k++)
+            {
+                sum = sum + digits[k];
+                product = product * digits[k];
+            }
+        }
+
+        // Changed this part
+        return original % (sum + product) == 0;
+    }
+};
