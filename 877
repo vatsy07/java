@@ -1,0 +1,32 @@
+class Solution {
+public:
+    vector<vector<int>> memo;
+
+    int solve(vector<int>& piles, int left, int right) {
+        // Only one pile
+        if (left == right)
+            return piles[left];
+
+        // Already calculated
+        if (memo[left][right] != -1)
+            return memo[left][right];
+
+        // Take the left pile.
+        // The opponent then gets their best advantage.
+        int takeLeft = piles[left] - solve(piles, left + 1, right);
+
+        // Take the right pile.
+        int takeRight = piles[right] - solve(piles, left, right - 1);
+
+        // Current player chooses the better option.
+        return memo[left][right] = max(takeLeft, takeRight);
+    }
+
+    bool stoneGame(vector<int>& piles) {
+        int n = piles.size();
+
+        memo.assign(n, vector<int>(n, -1));
+
+        return solve(piles, 0, n - 1) > 0;
+    }
+};
