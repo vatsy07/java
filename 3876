@@ -1,0 +1,56 @@
+class Solution {
+public:
+    bool uniformArray(vector<int>& nums1) {
+        
+        int even = 0;
+        int odd = 0;
+        
+        int smallestOdd = INT_MAX;
+        int smallestEven = INT_MAX;
+
+        // Count even/odd and find smallest even/odd
+        for (int i = 0; i < nums1.size(); i++) {
+            
+            if (nums1[i] % 2 == 0) {
+                even++;
+                
+                if (nums1[i] < smallestEven)
+                    smallestEven = nums1[i];
+            }
+            else {
+                odd++;
+                
+                if (nums1[i] < smallestOdd)
+                    smallestOdd = nums1[i];
+            }
+        }
+
+        // If all numbers are already of one type
+        if (even == 0 || odd == 0) {
+            return true;
+        }
+
+        // Smallest even must be greater than smallest odd
+        if (smallestEven - smallestOdd <= 0) {
+            return false;
+        }
+
+        // Convert even numbers into odd numbers
+        for (int i = 0; i < nums1.size(); i++) {
+            
+            if (nums1[i] % 2 == 0) {
+                nums1[i] -= smallestOdd;
+            }
+        }
+
+        // Final check
+        for (int i = 0; i < nums1.size(); i++) {
+            
+            if (nums1[i] <= 0 || nums1[i] % 2 == 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+};
