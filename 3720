@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    string lexGreaterPermutation(string s, string target) {
+        int n = s.size();
+
+        sort(s.begin(), s.end());
+
+        vector<int> visited(n, 0);
+        vector<int> chosen(n, -1);
+
+        string result = "";
+        int i = 0;
+
+        while (i < n) {
+            bool equalFound = false;
+
+            for (int j = 0; j < n; j++) {
+                if (!visited[j] && s[j] == target[i]) {
+                    visited[j] = 1;
+                    chosen[i] = j;
+                    result += s[j];
+                    equalFound = true;
+                    break;
+                }
+            }
+
+            if (!equalFound)
+                break;
+
+            i++;
+        }
+
+        int pos = i;
+
+        while (pos >= 0) {
+            if (pos < n) {
+                for (int j = 0; j < n; j++) {
+                    if (!visited[j] && s[j] > target[pos]) {
+                        string ans = result;
+                        ans += s[j];
+
+                        visited[j] = 1;
+
+                        for (int k = 0; k < n; k++) {
+                            if (!visited[k]) {
+                                ans += s[k];
+                            }
+                        }
+
+                        return ans;
+                    }
+                }
+            }
+
+            if (pos == 0)
+                break;
+
+            pos--;
+            visited[chosen[pos]] = 0;
+            result.pop_back();
+        }
+
+        return "";
+    }
+};
