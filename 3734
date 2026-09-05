@@ -1,0 +1,130 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    string lexPalindromicPermutation(string s, string target) {
+        int n = s.size();
+        int half = n / 2;
+
+        sort(s.begin(), s.end());
+
+        vector<int> count(26, 0);
+
+        for (char c : s) {
+            count[c - 'a']++;
+        }
+
+        int odd = 0;
+
+        for (int x : count) {
+            if (x % 2 != 0) odd++;
+        }
+
+        if (odd > 1)
+            return "";
+
+        string result(n, ' ');
+        vector<int> chosen(half, -1);
+
+        int i = 0;
+
+        while (i < half) {
+            int x = target[i] - 'a';
+
+            if (count[x] >= 2) {
+                count[x] -= 2;
+                chosen[i] = x;
+
+                result[i] = target[i];
+                result[n - 1 - i] = target[i];
+
+                i++;
+            } else {
+                break;
+            }
+        }
+
+        if (i == half) {
+            if (n % 2 == 1) {
+                for (int c = 0; c < 26; c++) {
+                    if (count[c] > 0) {
+                        result[half] = 'a' + c;
+                        break;
+                    }
+                }
+            }
+
+            if (result > target)
+                return result;
+
+            if (half == 0)
+                return "";
+
+            int pos = half - 1;
+            int x = chosen[pos];
+
+            count[x] += 2;
+            result[pos] = ' ';
+            result[n - 1 - pos] = ' ';
+
+            i = pos;
+        }
+
+        int pos = i;
+
+        while (pos >= 0) {
+            bool found = false;
+
+            for (int c = target[pos] - 'a' + 1; c < 26; c++) {
+                if (count[c] >= 2) {
+                    string ans = result;
+                    vector<int> remaining = count;
+
+                    ans[pos] = 'a' + c;
+                    ans[n - 1 - pos] = 'a' + c;
+
+                    remaining[c] -= 2;
+
+                    int left = pos + 1;
+
+                    for (int k = 0; k < 26; k++) {
+                        while (remaining[k] >= 2 && left < half) {
+                            char ch = 'a' + k;
+
+                            ans[left] = ch;
+                            ans[n - 1 - left] = ch;
+
+                            remaining[k] -= 2;
+                            left++;
+                        }
+                    }
+
+                    if (n % 2 == 1) {
+                        for (int k = 0; k < 26; k++) {
+                            if (remaining[k] > 0) {
+                                ans[half] = 'a' + k;
+                                break;
+                            }
+                        }
+                    }
+
+                    return ans;
+                }
+            }
+
+            if (pos == 0)
+                break;
+
+            pos--;
+
+            int x = chosen[pos];
+
+            count[x] += 2;
+            result[pos] = ' ';
+            result[n - 1 - pos] = ' ';
+        }
+
+        return "";
+    }
+};
