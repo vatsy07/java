@@ -1,0 +1,47 @@
+class Solution {
+public:
+    int firstStableIndex(vector<int>& nums, int k) {
+        
+        int n = nums.size();
+
+    
+        vector<pair<int, int>> v;
+
+        for (int i = 0; i < n; i++) {
+            v.push_back({nums[i], i});
+        }
+
+        sort(v.begin(), v.end());
+
+        int smallest = 0;   
+        int mx = nums[0];
+
+        for (int i = 0; i < n; i++) {
+
+            
+            if (nums[i] > mx) {
+                mx = nums[i];
+            }
+
+            
+            while (smallest < n && v[smallest].second < i) {
+                smallest++;
+            }
+
+            
+            if (smallest == n) {
+                return -1;
+            }
+
+            
+            int mn = v[smallest].first;
+
+            
+            if (mx - mn <= k) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+};
