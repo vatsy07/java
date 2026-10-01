@@ -1,0 +1,49 @@
+class Solution {
+public:
+
+    vector<vector<int>> answer;
+    vector<int> changes;
+
+    void find(vector<int>& candidates, int target, int i, int sum)
+    {
+        // Exact target reached
+        if (sum == target)
+        {
+            answer.push_back(changes);
+            return;
+        }
+
+        // Sum has crossed target
+        if (sum > target || i >= candidates.size())
+            return;
+
+        int diff = target - sum;
+
+        // Try current candidate
+        if (candidates[i] <= diff)
+        {
+            changes.push_back(candidates[i]);
+
+            // Keep using the same candidate
+            find(candidates, target, i, sum + candidates[i]);
+
+            // Remove it and try another possibility
+            changes.pop_back();
+        }
+
+        // Move to the next candidate
+        find(candidates, target, i + 1, sum);
+    }
+
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target)
+    {
+        sort(candidates.begin(), candidates.end());
+
+        answer.clear();
+        changes.clear();
+
+        find(candidates, target, 0, 0);
+
+        return answer;
+    }
+};
