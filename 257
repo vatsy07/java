@@ -1,0 +1,85 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+
+class Solution {
+public:
+
+    void traverse(TreeNode* root,
+                  vector<int>& visited,
+                  vector<string>& visited_final)
+    {
+        if (root == nullptr)
+            return;
+
+        // Add current node
+        visited.push_back(root->val);
+
+        // Local variables for this node
+        bool visited_left = false;
+        bool visited_right = false;
+
+        // If we reach a leaf node
+        if (root->left == nullptr && root->right == nullptr)
+        {
+            string path = "";
+
+            for (int i = 0; i < visited.size(); i++)
+            {
+                path += to_string(visited[i]);
+
+                if (i != visited.size() - 1)
+                    path += "->";
+            }
+
+            visited_final.push_back(path);
+
+            // Backtrack
+            visited.pop_back();
+
+            return;
+        }
+
+        // First go to LEFT
+        if (root->left != nullptr && visited_left == false)
+        {
+            visited_left = true;
+
+            traverse(root->left, visited, visited_final);
+
+            // After returning from left,
+            // remove the last element added by left traversal
+            // ONLY if needed by your backtracking logic.
+        }
+
+        // Now check RIGHT
+        if (root->right != nullptr && visited_right == false)
+        {
+            visited_right = true;
+
+            traverse(root->right, visited, visited_final);
+        }
+
+        // Both left and right are finished.
+        // Backtrack to parent.
+        visited.pop_back();
+    }
+
+    vector<string> binaryTreePaths(TreeNode* root)
+    {
+        vector<int> visited;
+        vector<string> visited_final;
+
+        traverse(root, visited, visited_final);
+
+        return visited_final;
+    }
+};
