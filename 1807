@@ -1,0 +1,93 @@
+class Solution {
+public:
+    string evaluate(string s, vector<vector<string>>& knowledge) {
+        
+        sort(knowledge.begin(), knowledge.end());
+
+        // Store the starting index for each character
+        vector<int> start(26, -1);
+
+        for(int i = 0; i < knowledge.size(); i++)
+        {
+            int ch = knowledge[i][0][0] - 'a';
+
+            if(start[ch] == -1)
+            {
+                start[ch] = i;
+            }
+        }
+
+        string ans = "";
+
+        int i = 0;
+
+        while(i < s.length())
+        {
+            if(s[i] != '(')
+            {
+                ans += s[i];
+                i++;
+            }
+            else
+            {
+                bool found = false;
+
+                // First character of the key
+                char first = s[i + 1];
+
+                // Find where keys starting with this character begin
+                int begin = start[first - 'a'];
+
+                if(begin != -1)
+                {
+                    for(int j = begin; j < knowledge.size(); j++)
+                    {
+                        string key = knowledge[j][0];
+
+                        // Stop when first character changes
+                        if(key[0] != first)
+                        {
+                            break;
+                        }
+
+                        int k = i + 1;
+                        int l = 0;
+
+                        // Compare characters
+                        while(k < s.length() && s[k] != ')' &&
+                              l < key.length() &&
+                              s[k] == key[l])
+                        {
+                            k++;
+                            l++;
+                        }
+
+                        if(l == key.length() && s[k] == ')')
+                        {
+                            ans += knowledge[j][1];
+
+                            i = k + 1;
+
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(!found)
+                {
+                    ans += '?';
+
+                    while(s[i] != ')')
+                    {
+                        i++;
+                    }
+
+                    i++;
+                }
+            }
+        }
+
+        return ans;
+    }
+};
