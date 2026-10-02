@@ -1,0 +1,40 @@
+class Solution {
+public:
+
+    int solve(string s, int k) {
+
+        if (s.length() < k)
+            return 0;
+
+        int freq[26] = {0};
+
+        // Count instances
+        for (char c : s)
+            freq[c - 'a']++;
+
+        // Find a character which cannot belong
+        // to any valid substring
+        for (int i = 0; i < s.length(); i++) {
+
+            if (freq[s[i] - 'a'] < k) {
+
+                // Split at this character
+                string left = s.substr(0, i);
+                string right = s.substr(i + 1);
+
+                // Check both sides
+                int leftAns = solve(left, k);
+                int rightAns = solve(right, k);
+
+                return max(leftAns, rightAns);
+            }
+        }
+
+        // Every character occurs >= k times
+        return s.length();
+    }
+
+    int longestSubstring(string s, int k) {
+        return solve(s, k);
+    }
+};
