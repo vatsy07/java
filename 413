@@ -1,0 +1,45 @@
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& nums) {
+
+        int n = nums.size();
+
+        if (n < 3)
+            return 0;
+
+        int prev_diff = nums[0] - nums[1];
+        int start_ind = 0;
+        int count = 0;
+
+        for (int i = 0; i < n - 1; i++)
+        {
+            int diff = nums[i] - nums[i + 1];
+
+            if (diff != prev_diff)
+            {
+                int x = i - start_ind + 1;
+
+                if (x < 3)
+                {
+                }
+                else
+                {
+                    count += (x - 2) * (x - 1) / 2;
+                }
+
+                start_ind = i;
+                prev_diff = diff;
+            }
+        }
+
+        // Your logic at the end for the remaining sequence
+        int x = n - start_ind;
+
+        if (x >= 3)
+        {
+            count += (x - 2) * (x - 1) / 2;
+        }
+
+        return count;
+    }
+};
